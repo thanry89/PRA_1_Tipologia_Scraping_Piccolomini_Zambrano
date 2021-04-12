@@ -19,33 +19,65 @@ def comma_to_none(string):
 
 if __name__ == "__main__":
 
-    # Primer link
+       ## Primer link https://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population
+
+    #esta celda es para saber como encontrar la tabla en el html
+
     content = getHTMLContent('https://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population')
+
+    #encontre que la etiqueta que necesito es wikitable sortable plainrowheaders
+
     table = content.find('table', {'class': 'wikitable sortable plainrowheaders'})
     rows = table.find_all('tr')
-    Data_1=pd.DataFrame(columns = ['Country','Population','world_proportion_population'])
+
+    # Me armo el primer data frame con country y population del primer link
+
+
+
+
+
+
+
+
     rows_list=[]
 
+
+    # 
     for row in rows:
         cells = row.find_all('td')
         if len(cells) > 1:
             country = cells[0].find('a').text
             population=cells[1].text
             proporcion=cells[2].text
+
+
             rows_list.append([country,population,proporcion])
-    Data_1 = pd.DataFrame(rows_list,columns = ['Country','Population','world_proportion_population'])
-    
+    Data_1=pd.DataFrame(rows_list,columns = ['Country','Population','_%_world'])
     Data_1['Population']=Data_1.apply(lambda x: comma_to_none(x['Population']),  axis=1)
-    #no agarra el country 120, no esta bien agregar a mano
+
+    #Agrego Palestina a mano parece q como to ma el link
     Data_1['Country'][120]='Palestine'
 
-    
+
+
+
+
     lista_paises=Data_1['Country'].tolist()
 
-    # Segundo Link
+
+
+
+
+
+
+
+
+
+
+    ## Segundo Link https://en.wikipedia.org/wiki/List_of_countries_by_exports
+
     content2 = getHTMLContent('https://en.wikipedia.org/wiki/List_of_countries_by_exports')
-    tables2 = content2.find_all('table')
-   
+
 
     table2 = content2.find('table', {'class': 'wikitable sortable'})
     rows2 = table2.find_all('tr')
@@ -65,25 +97,31 @@ if __name__ == "__main__":
     Data_2=pd.DataFrame(rows_list2,columns = ['Country','export_million_USD','_%_GDP','Year_exp_data'])
     Data_2['export_million_USD']=Data_2.apply(lambda x: comma_to_none(x['export_million_USD']),  axis=1)
 
-    lista_paises2=Data_2['Country'].tolist()
 
-    set(lista_paises2).symmetric_difference(set(lista_paises)).intersection(lista_paises2)
+
+
     Data_2['Country']=Data_2['Country'].replace("Côte d'Ivoire",'Ivory Coast')
 
     Data_2['Country']=Data_2['Country'].replace('Democratic Republic of the Congo','DR Congo')
     Data_2['Country']=Data_2['Country'].replace('Macao','Macau')
     Data_2['Country']=Data_2['Country'].replace("Timor-Leste",'East Timor')
-    lista_paises2=Data_2['Country'].tolist()
-    len(set(lista_paises2).intersection(set(lista_paises)))
-    set(lista_paises2).symmetric_difference(set(lista_paises)).intersection(lista_paises2)
-    set(lista_paises2).symmetric_difference(set(lista_paises)).intersection(lista_paises)
+
+
+
     data_12=pd.merge(Data_1,Data_2, how='outer',on='Country')
 
+    data_12
 
-    # Tercer Link
+
+
+
+
+
+
+
+    ## tercer link https://en.wikipedia.org/wiki/List_of_countries_by_imports
 
     content3 = getHTMLContent('https://en.wikipedia.org/wiki/List_of_countries_by_imports')
-    tables3 = content3.find_all('table')
 
     table3 = content3.find('table', {'class': 'wikitable sortable'}) #esta
     rows3 = table3.find_all('tr')
@@ -102,10 +140,10 @@ if __name__ == "__main__":
     Data_3=pd.DataFrame(rows_list3,columns = ['Country','import_million_USD','Year_imp_data'])
     Data_3['import_million_USD']=Data_3.apply(lambda x: comma_to_none(x['import_million_USD']),  axis=1) 
 
-    lista_paises3=Data_3['Country'].tolist()
 
-    set(lista_paises3).symmetric_difference(set(lista_paises)).intersection(lista_paises3)
 
+
+    Data_3['Country']=Data_3['Country'].replace('Cocos Islands','Cocos (Keeling) Islands')
     Data_3['Country']=Data_3['Country'].replace("Côte d'Ivoire",'Ivory Coast')
 
     Data_3['Country']=Data_3['Country'].replace('Democratic Republic of the Congo','DR Congo')
@@ -117,24 +155,25 @@ if __name__ == "__main__":
     Data_3['Country']=Data_3['Country'].replace("Micronesia",'F.S. Micronesia')
     Data_3['Country']=Data_3['Country'].replace("Timor-Leste",'East Timor')
 
-    lista_paises3=Data_3['Country'].tolist()
-
-    set(lista_paises3).symmetric_difference(set(lista_paises)).intersection(lista_paises3)
-
-    lista_paises3=Data_3['Country'].tolist()
-
-    set(lista_paises3).symmetric_difference(set(lista_paises2)).intersection(lista_paises3)
-
-    lista_paises3=Data_3['Country'].tolist()
-
-    set(lista_paises3).symmetric_difference(set(lista_paises2)).intersection(lista_paises3)
 
     data_123=pd.merge(data_12,Data_3, how='outer',on='Country')
 
-    # Cuarto Link
+
+
+
+
+
+
+
+
+
+    ## Cuarto link https://en.wikipedia.org/wiki/List_of_countries_by_leading_trade_partners
 
     content4 = getHTMLContent('https://en.wikipedia.org/wiki/List_of_countries_by_leading_trade_partners')
-    tables4 = content4.find_all('table')
+
+
+
+
 
     table4 = content4.find('table', {'class': 'wikitable sortable'}) #esta
     rows4 = table4.find_all('tr')
@@ -158,10 +197,6 @@ if __name__ == "__main__":
             rows_list4.append([country, Leading_Export_Market,Leading_Import_Market])
     Data_4=pd.DataFrame(rows_list4,columns = ['Country','Leading_Export_Market','Leading_Import_Market'])
 
-    lista_paises4=Data_4['Country'].tolist()
-
-    set(lista_paises4).symmetric_difference(set(lista_paises)).intersection(lista_paises4)
-
     Data_4['Country']=Data_4['Country'].replace('Bosnia','Bosnia and Herzegovina')
     Data_4['Country']=Data_4['Country'].replace('Congo, Democratic Republic of the','DR Congo')
     Data_4['Country']=Data_4['Country'].replace('Federated States of Micronesia','F.S. Micronesia')
@@ -174,16 +209,17 @@ if __name__ == "__main__":
 
     Data_4['Country']=Data_4['Country'].replace('Vatican','Vatican City')
 
-    lista_paises4=Data_4['Country'].tolist()
-
-    set(lista_paises4).symmetric_difference(set(lista_paises)).intersection(lista_paises4)
 
     data_1234=pd.merge(data_123,Data_4, how='outer',on='Country')
 
-    # Quinto Link
+
+
+
+
+    ## Quinto link -https://en.wikipedia.org/wiki/List_of_countries_by_oil_exports
+
 
     content5 = getHTMLContent('https://en.wikipedia.org/wiki/List_of_countries_by_oil_exports')
-    tables5 = content5.find_all('table')
 
     table5 = content5.find('table', {'class': 'wikitable sortable'}) #esta
     rows5 = table5.find_all('tr')
@@ -207,20 +243,14 @@ if __name__ == "__main__":
             rows_list5.append([country, oil_export_bbl_day,year_oil_export_data])
     Data_5=pd.DataFrame(rows_list5,columns = ['Country','oil_export_bbl_day','year_oil_export_data'])
 
-    lista_paises5=Data_5['Country'].tolist()
 
-    #set(lista_paises5).symmetric_difference(set(lista_paises)).intersection(lista_paises5)lista_paises5=Data_5['Country'].tolist()
 
-    #set(lista_paises5).symmetric_difference(set(lista_paises)).intersection(lista_paises5)
-
+    #Data_5['Country']=Data_5['Country'].replace('Cocos Islands','Cocos (Keeling) Islands')
     Data_5['Country']=Data_5['Country'].replace("Côte d'Ivoire",'Ivory Coast')
 
     #Data_5['Country']=Data_5['Country'].replace('Bosnia','Bosnia and Herzegovina')
     Data_5['Country']=Data_5['Country'].replace('Democratic Republic of the Congo','DR Congo')
-    #Data_5['Country']=Data_5['Country'].replace('Federated States of Micronesia','F.S. Micronesia')
-    #Data_5['Country']=Data_5['Country'].replace('Sao Tome and Principe','São Tomé and Príncipe')
-    #Data_5['Country']=Data_5['Country'].replace('State of Palestine','Palestine')
-    #Data_5['Country']=Data_5['Country'].replace('Macao','Macau')
+
     Data_5['Country']=Data_5['Country'].replace('Timor-Leste','East Timor')
 
     #Data_5['Country']=Data_5['Country'].replace('Swaziland','Eswatini')
@@ -228,36 +258,27 @@ if __name__ == "__main__":
     #Data_5['Country']=Data_5['Country'].replace('Vatican','Vatican City')
     #Data_5['Country']=Data_5['Country'].replace('Macedonia','North Macedonia')
     Data_5['Country']=Data_5['Country'].replace('Republic of the Congo','Congo')
+    #Data_5['Country']=Data_5['Country'].replace('Saint Helena, Ascension and Tristan da Cunha','Saint Helena, Ascensionand Tristan da Cunha')
 
-    lista_paises5=Data_5['Country'].tolist()
 
-    set(lista_paises5).symmetric_difference(set(lista_paises)).intersection(lista_paises5)
+
 
     data_12345=pd.merge(data_1234,Data_5, how='outer',on='Country')
 
-    # Sexto Link
+
+
+
+
+
+
+
+     ## Sexto link    -https://en.wikipedia.org/wiki/List_of_countries_by_oil_production
 
     content6 = getHTMLContent('https://en.wikipedia.org/wiki/List_of_countries_by_oil_production')
-    tables6 = content6.find_all('table')
 
-    table6 = content6.find('table', {'class': 'wikitable sortable'}) #esta
-    rows6 = table6.find_all('tr')
 
-    ad=rows6[82].find_all('td')
-    ad[1].find('a')
 
-    for row in rows6:
-        cells6 = row.find_all('td')
-        if len(cells6) > 1:
-            try:
-                country= cells6[1].find('a').text
-                oil_production_bbl_day=cells6[2].text
-                oil_production_bbl_day_per_capita=cells6[3].text
-            except:
 
-                country= cells6[0].find('a').text
-                oil_production_bbl_day=cells6[1].text
-                oil_production_bbl_day_per_capita=cells6[2].text
 
     table6 = content6.find('table', {'class': 'wikitable sortable'}) #esta
     rows6 = table6.find_all('tr')
@@ -278,38 +299,23 @@ if __name__ == "__main__":
                 oil_production_bbl_day_per_capita=cells6[2].text
 
             rows_list6.append([country, oil_production_bbl_day,oil_production_bbl_day_per_capita])
+
     Data_6=pd.DataFrame(rows_list6,columns = ['Country','oil_production_bbl_day','oil_production_bbl_day_per_capita'])
-
-    lista_paises6=Data_6['Country'].tolist()
-
-    set(lista_paises6).symmetric_difference(set(lista_paises)).intersection(lista_paises6)
 
     Data_6['Country']=Data_6['Country'].replace("Côte d'Ivoire",'Ivory Coast')
 
     #Data_6['Country']=Data_6['Country'].replace('Bosnia','Bosnia and Herzegovina')
     Data_6['Country']=Data_6['Country'].replace('Czechia','Czech Republic')
     Data_6['Country']=Data_6['Country'].replace('Congo-Kinshasa','DR Congo')
-    #Data_6['Country']=Data_6['Country'].replace('Federated States of Micronesia','F.S. Micronesia')
-    #Data_6['Country']=Data_6['Country'].replace('Sao Tome and Principe','São Tomé and Príncipe')
-    #Data_6['Country']=Data_6['Country'].replace('State of Palestine','Palestine')
-    #Data_6['Country']=Data_6['Country'].replace('Macao','Macau')
-    #Data_6['Country']=Data_6['Country'].replace('Timor-Leste','East Timor')
 
-    #Data_6['Country']=Data_6['Country'].replace('Swaziland','Eswatini')
-
-    #Data_6['Country']=Data_6['Country'].replace('Vatican','Vatican City')
-    #Data_6['Country']=Data_6['Country'].replace('Macedonia','North Macedonia')
     Data_6['Country']=Data_6['Country'].replace('Congo-Brazzaville','Congo')
     #Data_6['Country']=Data_6['Country'].replace('Saint Helena, Ascension and Tristan da Cunha','Saint Helena, Ascensionand Tristan da Cunha')
-    Data_6['Country']=Data_6['Country'].replace("Republic of China",'China')
 
-    lista_paises6=Data_6['Country'].tolist()
 
-    set(lista_paises6).symmetric_difference(set(lista_paises)).intersection(lista_paises6)
+
+
 
     data_123456=pd.merge(data_12345,Data_6, how='outer',on='Country')
-
-    #data_123456.to_csv('Country_Trade_GDP.csv', index=False)
 
 
 
@@ -322,9 +328,9 @@ if __name__ == "__main__":
 
     data = wiki_economy(countries)
 
-    dataset = pd.merge( data_123456, data, on = 'Country')
+    dataset = pd.merge( data_123456, data, on = 'Country', how='left')
 
     
 
-    dataset.to_csv('/home/tat/Downloads/UOC/tipologia/PRA1/ProyectoFinal/data/wiki_country_data.csv',index=False)
+    dataset.to_csv('/data/wiki_country_data.csv',index=False)
 
